@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Share My Location</title>
+    <script>
+      function sendLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Replace this with your Make.com Webhook URL
+            const webhookUrl = "https://hook.make.com/your-webhook-url";
+
+            // Send the data to your webhook
+            fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                latitude: latitude,
+                longitude: longitude,
+                user_id: "user_id_placeholder", // Optional: Replace with user ID if needed
+              }),
+            })
+              .then((response) => {
+                if (response.ok) {
+                  alert("Location sent successfully!");
+                  window.close(); // Close the page after sending location
+                } else {
+                  alert("Failed to send location.");
+                }
+              })
+              .catch((error) => {
+                alert("Error: " + error.message);
+              });
+          });
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      }
+    </script>
+  </head>
+  <body onload="sendLocation()">
+    <h1>Sharing Location...</h1>
+    <p>Please allow location access.</p>
+  </body>
+</html>
