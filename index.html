@@ -10,7 +10,7 @@
             const longitude = position.coords.longitude;
 
             // Replace this with your Make.com Webhook URL
-            const webhookUrl = "https://hook.make.com/your-webhook-url";
+            const webhookUrl = "https://hook.us2.make.com/pgxj3f5fswcsfe76677lqa57sdv9glu0";
 
             // Send the data to your webhook
             fetch(webhookUrl, {
@@ -21,7 +21,7 @@
               body: JSON.stringify({
                 latitude: latitude,
                 longitude: longitude,
-                user_id: "user_id_placeholder", // Optional: Replace with user ID if needed
+                user_id: "User_Id", // Optional: Replace with user ID if needed
               }),
             })
               .then((response) => {
