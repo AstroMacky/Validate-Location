@@ -22,6 +22,8 @@
               // Dynamically extract user_id (if passed as a query parameter)
               const userId = getQueryParameter("user_id") || "unknown";
 
+              console.log("Latitude:", latitude, "Longitude:", longitude, "User ID:", userId); // Debugging
+
               // Send the data to your webhook
               fetch(webhookUrl, {
                 method: "POST",
@@ -39,20 +41,27 @@
                     alert("Location sent successfully!");
                     window.close(); // Close the page after sending location
                   } else {
-                    alert("Failed to send location.");
+                    console.error("Failed to send location:", response.statusText); // Debugging
+                    alert("Failed to send location. Please try again.");
                   }
                 })
                 .catch((error) => {
+                  console.error("Fetch error:", error.message); // Debugging
                   alert("Error: " + error.message);
                 });
             },
             function (error) {
-              alert("Error getting location: " + error.message);
+              console.error("Error getting location:", error.message); // Debugging
+              alert(
+                "Error getting location: " +
+                  (error.message || "Please allow location access.")
+              );
               window.close();
             }
           );
         } else {
           alert("Geolocation is not supported by this browser.");
+          console.error("Geolocation not supported."); // Debugging
           window.close();
         }
       }
