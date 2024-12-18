@@ -10,22 +10,33 @@
       }
 
       function sendLocation() {
+        const statusElement = document.getElementById("status");
+        const loaderElement = document.getElementById("loader");
+
         if (navigator.geolocation) {
+          statusElement.innerText = "Retrieving your location...";
+          loaderElement.style.display = "block";
+
           navigator.geolocation.getCurrentPosition(
             function (position) {
               const latitude = position.coords.latitude;
               const longitude = position.coords.longitude;
 
+              if (latitude === 0 && longitude === 0) {
+                alert("Error: Invalid location detected. Please try again.");
+                console.error("Invalid location data: Latitude and Longitude are 0.");
+                window.close();
+                return;
+              }
+
               // Replace this with your Make.com Webhook URL
               const webhookUrl = "https://hook.us2.make.com/2mwqx4zc6jtx9pr4ycrw9pwimsil37vo";
 
-              // Dynamically extract user_id (if passed as a query parameter)
               const userId = getQueryParameter("user_id") || "unknown";
 
-              console.log("Latitude:", latitude, "Longitude:", longitude, "User ID:", userId); // Debugging
+              console.log("Latitude:", latitude, "Longitude:", longitude, "User ID:", userId);
 
-              // Send the data to your webhook
-              fetch(webhookUrl, {
+              fetchWithTimeout(webhookUrl, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -39,19 +50,21 @@
                 .then((response) => {
                   if (response.ok) {
                     alert("Location sent successfully!");
-                    window.close(); // Close the page after sending location
+                    window.close();
                   } else {
-                    console.error("Failed to send location:", response.statusText); // Debugging
+                    console.error("Failed to send location:", response.statusText);
                     alert("Failed to send location. Please try again.");
                   }
                 })
                 .catch((error) => {
-                  console.error("Fetch error:", error.message); // Debugging
+                  console.error("Fetch error:", error.message);
                   alert("Error: " + error.message);
                 });
             },
             function (error) {
-              console.error("Error getting location:", error.message); // Debugging
+              statusElement.innerText = "Failed to retrieve location.";
+              loaderElement.style.display = "none";
+              console.error("Error getting location:", error.message);
               alert(
                 "Error getting location: " +
                   (error.message || "Please allow location access.")
@@ -61,14 +74,24 @@
           );
         } else {
           alert("Geolocation is not supported by this browser.");
-          console.error("Geolocation not supported."); // Debugging
+          console.error("Geolocation not supported.");
           window.close();
         }
+      }
+
+      function fetchWithTimeout(url, options, timeout = 5000) {
+        return Promise.race([
+          fetch(url, options),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Request timeout")), timeout)
+          ),
+        ]);
       }
     </script>
   </head>
   <body onload="sendLocation()">
-    <h1>Sharing Location...</h1>
+    <h1 id="status">Sharing Location...</h1>
+    <div id="loader" style="display: none;">⏳</div>
     <p>Please allow location access.</p>
   </body>
 </html>
