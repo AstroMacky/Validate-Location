@@ -29,16 +29,18 @@
                 return;
               }
 
-              // Make.com Webhook URL
+              // Replace this with your Make.com Webhook URL
               const webhookUrl = "https://hook.us2.make.com/2mwqx4zc6jtx9pr4ycrw9pwimsil37vo";
 
               // Dynamically extract user_id and type from the URL
               const userId = getQueryParameter("user_id") || "unknown";
-              const type = getQueryParameter("type") || "unknown";
+              const type = "geolocation"; // Define the type for geolocation requests
 
+              // Debugging logs
+              console.log("Before sending to webhook:");
               console.log("Latitude:", latitude, "Longitude:", longitude, "User ID:", userId, "Type:", type);
 
-              // Send data to the Webhook
+              // Send the data to your webhook
               fetchWithTimeout(webhookUrl, {
                 method: "POST",
                 headers: {
@@ -47,13 +49,14 @@
                 body: JSON.stringify({
                   type: type, // Include the request type
                   user_id: userId,
-                  latitude: Latitude,
-                  longitude: Longitude,
+                  latitude: latitude,
+                  longitude: longitude,
                 }),
               })
                 .then((response) => {
                   if (response.ok) {
                     alert("Location sent successfully!");
+                    console.log("Webhook response: Success");
                     window.close();
                   } else {
                     console.error("Failed to send location:", response.statusText);
@@ -68,11 +71,24 @@
             function (error) {
               statusElement.innerText = "Failed to retrieve location.";
               loaderElement.style.display = "none";
+
+              // Detailed geolocation error handling
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  alert("User denied the request for Geolocation.");
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  alert("Location information is unavailable.");
+                  break;
+                case error.TIMEOUT:
+                  alert("The request to get user location timed out.");
+                  break;
+                case error.UNKNOWN_ERROR:
+                  alert("An unknown error occurred.");
+                  break;
+              }
+
               console.error("Error getting location:", error.message);
-              alert(
-                "Error getting location: " +
-                  (error.message || "Please allow location access.")
-              );
               window.close();
             }
           );
@@ -83,6 +99,7 @@
         }
       }
 
+      // Function to handle fetch requests with a timeout
       function fetchWithTimeout(url, options, timeout = 5000) {
         return Promise.race([
           fetch(url, options),
