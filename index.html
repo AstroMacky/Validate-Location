@@ -46,9 +46,9 @@
                 },
                 body: JSON.stringify({
                   type: type, // Include the request type
-                  "user_id": "{userId}",
-                  "latitude": "{latitude}",
-                  "longitude": "{longitude}",
+                  "user_id": {userId},
+                  "latitude": {latitude},
+                  "longitude": {longitude},
                 }),
               })
                 .then((response) => {
