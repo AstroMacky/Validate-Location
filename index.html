@@ -24,7 +24,7 @@
 
               if (latitude === 0 && longitude === 0) {
                 alert("Error: Invalid location detected. Please try again.");
-                console.error("Invalid location data: Latitude and Longitude are 0.");
+                console.error("Invalid location data: latitude and longitude are 0.");
                 window.close();
                 return;
               }
@@ -38,7 +38,7 @@
 
               // Debugging logs
               console.log("Before sending to webhook:");
-              console.log("Latitude:", latitude, "Longitude:", longitude, "User ID:", userId, "Type:", type);
+              console.log("latitude:", latitude, "longitude:", longitude, "User ID:", userId, "Type:", type);
 
               // Send the data to your webhook
               fetchWithTimeout(webhookUrl, {
