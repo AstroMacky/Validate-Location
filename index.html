@@ -29,9 +29,9 @@
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  latitude: latitude,
-                  longitude: longitude,
-                  user_id: userId,
+                  latitude: {latitude},
+                  longitude: {longitude},
+                  user_id: {userId},
                 }),
               })
                 .then((response) => {
