@@ -3,41 +3,57 @@
   <head>
     <title>Share My Location</title>
     <script>
+      // Function to extract query parameters from the URL
+      function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+
       function sendLocation() {
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
 
-            // Replace this with your Make.com Webhook URL
-            const webhookUrl = "https://hook.us2.make.com/pgxj3f5fswcsfe76677lqa57sdv9glu0";
+              // Replace this with your Make.com Webhook URL
+              const webhookUrl = "https://hook.us2.make.com/pgxj3f5fswcsfe76677lqa57sdv9glu0";
 
-            // Send the data to your webhook
-            fetch(webhookUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                latitude: latitude,
-                longitude: longitude,
-                user_id: "User_Id", // Optional: Replace with user ID if needed
-              }),
-            })
-              .then((response) => {
-                if (response.ok) {
-                  alert("Location sent successfully!");
-                  window.close(); // Close the page after sending location
-                } else {
-                  alert("Failed to send location.");
-                }
+              // Dynamically extract user_id (if passed as a query parameter)
+              const userId = getQueryParameter("user_id") || "unknown";
+
+              // Send the data to your webhook
+              fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  latitude: latitude,
+                  longitude: longitude,
+                  user_id: userId,
+                }),
               })
-              .catch((error) => {
-                alert("Error: " + error.message);
-              });
-          });
+                .then((response) => {
+                  if (response.ok) {
+                    alert("Location sent successfully!");
+                    window.close(); // Close the page after sending location
+                  } else {
+                    alert("Failed to send location.");
+                  }
+                })
+                .catch((error) => {
+                  alert("Error: " + error.message);
+                });
+            },
+            function (error) {
+              alert("Error getting location: " + error.message);
+              window.close();
+            }
+          );
         } else {
           alert("Geolocation is not supported by this browser.");
+          window.close();
         }
       }
     </script>
